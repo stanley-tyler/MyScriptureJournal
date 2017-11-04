@@ -1,0 +1,78 @@
+﻿@{
+    var book = "";
+    var chapter = "";
+    var verse = "";
+    var note = "";
+    var date = "";
+    var scriptureId = "";
+    book = Request.QueryString["bookSearch"];
+    var db = Database.Open("Scriptures");
+    var selectedData = db.Query("SELECT * FROM Scriptures WHERE Book = @0", book);
+    var grid = new WebGrid(source: selectedData);
+
+    }
+
+
+<style type="text/css">
+    .grid {
+        margin: 4px;
+        border-collapse: collapse;
+        width: 600px;
+    }
+
+        .grid th, .grid td {
+            border: 1px solid #C0C0C0;
+            text-align: center;
+            padding: 5px;
+        }
+
+    .head {
+        background-color: #E8E8E8;
+        font-weight: bold;
+        color: #FFF;
+    }
+
+    .alt {
+        background-color: #E8E8E8;
+        color: #000;
+    }
+</style>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
+    <meta charset = "utf-8" />
+    <title>Results</title>
+    <style>
+        body {
+            font-family: 'Oswald', sans-serif;
+        }
+        .validation-summary-errors {
+        border: 2px dashed red;
+        color: red;
+        font - weight: bold;
+        margin: 12px;
+    }
+    </style>
+</head>
+<body>
+    <h1>Results</h1>
+    @Html.ValidationSummary()
+    <div>
+        @grid.GetHtml(
+            tableStyle: "grid",
+            headerStyle: "head",
+            alternatingRowStyle: "alt",
+            columns: grid.Columns(
+                grid.Column("Book"),
+                grid.Column("Chapter"),
+                grid.Column("Verse"),
+                grid.Column("Note"),
+                grid.Column("Date")
+            )
+       )
+    </div>
+    <p><a href="~/Scriptures">Return to scripture journal</a></p>
+</body>
+</html>

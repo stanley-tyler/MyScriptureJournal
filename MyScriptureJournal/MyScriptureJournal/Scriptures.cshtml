@@ -1,0 +1,78 @@
+﻿@{
+    var db = Database.Open("Scriptures");
+    var selectedData = db.Query("SELECT * FROM Scriptures");
+    var grid = new WebGrid(source: selectedData, rowsPerPage: 5);
+
+    if(IsPost && Request.Form["bookSearch"] != "")
+    {
+        Response.Redirect("~/SearchScripture?bookSearch=" + Request.Form["bookSearch"]);
+    }
+    else if (IsPost && Request.Form["keywordSearch"] != "")
+    {
+        Response.Redirect("~/SearchKeyword?keywordSearch=" + Request.Form["keywordSearch"]);
+    }
+}
+
+<style type="text/css">
+
+    .grid {
+        margin: 4px;
+        border-collapse: collapse;
+        width: 600px;
+    }
+
+        .grid th, .grid td {
+            border: 1px solid #C0C0C0;
+            text-align: center;
+            padding: 5px;
+        }
+
+    .head {
+        background-color: #E8E8E8;
+        font-weight: bold;
+        color: #FFF;
+    }
+
+    .alt {
+        background-color: #E8E8E8;
+        color: #000;
+    }
+</style>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Oswald', sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>My Scripture Journal</h1>
+    <form method="post">
+        <input type="text" name="keywordSearch" value="" /><input type="submit" value="Search" />
+        <input type="text" name="bookSearch" value="" /><input type="submit" value="Search"  />
+    </form>
+    <div>
+        @grid.GetHtml(
+            tableStyle: "grid",
+            headerStyle: "head",
+            alternatingRowStyle: "alt",
+            columns: grid.Columns(
+                grid.Column(format: @<a href="~/EditScripture?id=@item.ID">Edit</a>),
+                grid.Column("Book"),
+                grid.Column("Chapter"),
+                grid.Column("Verse"),
+                grid.Column("Note"),
+                grid.Column("Date"),
+                grid.Column(format: @<a href="~/DeleteScripture?id=@item.ID">Delete</a>)
+            )
+       )
+    </div>
+    <button class="addScriptureButton" onclick="window.location.href='/AddScripture'">Add a Scripture</button>
+</body>
+</html>
+
